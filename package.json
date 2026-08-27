@@ -1,0 +1,37 @@
+{
+  "name": "nostr-backup",
+  "version": "1.0.0",
+  "description": "Backup Nostr posts and ipfs:// media for one or many npubs.",
+  "type": "module",
+  "bin": {
+    "nostr-backup": "bin/nostr-backup.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node bin/nostr-backup.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "nostr-tools": "^2.25.0",
+    "ws": "^8.18.3"
+  },
+  "keywords": [
+    "nostr",
+    "ipfs",
+    "backup",
+    "npub"
+  ],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/besoeasy/nostr-backup.git"
+  }
+}
