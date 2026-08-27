@@ -50,6 +50,7 @@ Only `ipfs://` links are fetched. HTTP gateways, Blossom servers, and bare CIDs 
 | `<npub...>` | One or many npubs (hex pubkeys and `nprofile` also work) |
 | `--folder`, `-o` / `FOLDER` | Output directory (default `./backup`) |
 | `--relays`, `-r` / `RELAYS` | Extra `wss://` relays, comma-separated |
+| `--gateway` / `IPFS_GATEWAYS` | Extra IPFS HTTP gateway (e.g. `http://localhost:3232` for Originless) |
 | `--timeout` | Relay wait per page in ms (default `8000`) |
 | `--pages` | Max history pages per npub (default `50`) |
 
@@ -74,4 +75,4 @@ Queries **all of these** by default, then any `--relays` you add:
 - `wss://purplepag.es`
 - `wss://relay.nostr.bg`
 
-Uses [`nostr-tools`](https://www.npmjs.com/package/nostr-tools) `SimplePool`.
+Uses [`nostr-tools`](https://www.npmjs.com/package/nostr-tools) `SimplePool`. Bytes for `ipfs://` CIDs are pulled through public IPFS HTTP gateways, or a node you pass with `--gateway` (Originless on `:3232` works).

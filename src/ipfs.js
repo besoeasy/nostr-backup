@@ -3,9 +3,9 @@ const CID_V1 = /^b[a-z2-7]{50,}$/i;
 const IPFS_URI_RE = /ipfs:\/\/[^\s"'<>)\]\\,;]+/gi;
 
 export const IPFS_GATEWAYS = [
-  "https://ipfs.io/ipfs/",
   "https://dweb.link/ipfs/",
-  "https://cloudflare-ipfs.com/ipfs/",
+  "https://ipfs.io/ipfs/",
+  "https://w3s.link/ipfs/",
   "https://gateway.pinata.cloud/ipfs/",
 ];
 
@@ -136,10 +136,27 @@ export function extractIpfsRefsFromEvents(events) {
   return [...map.values()];
 }
 
-export function gatewayUrls(ref) {
-  const path = ref.subpath ? `${ref.cid}/${ref.subpath}` : ref.cid;
+export function normalizeGateway(base) {
+  const value = String(base || "").trim();
+  if (!value) return "";
+  if (value.endsWith("/ipfs/") || value.endsWith("/ipfs")) {
+    return value.endsWith("/") ? value : `${value}/`;
+  }
+  return value.endsWith("/") ? `${value}ipfs/` : `${value}/ipfs/`;
+}
+
+export function gatewayUrls(ref, extraGateways = []) {
+  const pathPart = ref.subpath ? `${ref.cid}/${ref.subpath}` : ref.cid;
   const suffix = ref.filename && !ref.subpath ? `?filename=${encodeURIComponent(ref.filename)}` : "";
-  return IPFS_GATEWAYS.map((base) => `${base}${path}${suffix}`);
+  const bases = [];
+  const seen = new Set();
+  for (const raw of [...extraGateways, ...IPFS_GATEWAYS]) {
+    const base = normalizeGateway(raw);
+    if (!base || seen.has(base)) continue;
+    seen.add(base);
+    bases.push(base);
+  }
+  return bases.map((base) => `${base}${pathPart}${suffix}`);
 }
 
 export function mediaFilename(ref) {

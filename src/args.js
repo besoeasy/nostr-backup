@@ -17,6 +17,7 @@ function takeValue(argv, index, flag) {
 export function parseArgs(argv, env = process.env) {
   const positional = [];
   const extraRelays = [];
+  const extraGateways = [];
   let folder = env.FOLDER || env.OUTPUT_DIR || env.OUT || "backup";
   let maxWait = Number(env.MAX_WAIT || 8000);
   let maxPages = Number(env.PAGES || 50);
@@ -56,6 +57,11 @@ export function parseArgs(argv, env = process.env) {
       i++;
       continue;
     }
+    if (arg === "--gateway" || arg === "--gateways") {
+      extraGateways.push(...splitList(takeValue(argv, i, arg)));
+      i++;
+      continue;
+    }
     if (arg.startsWith("-")) {
       throw new Error(`unknown option: ${arg}`);
     }
@@ -63,6 +69,7 @@ export function parseArgs(argv, env = process.env) {
   }
 
   extraRelays.push(...splitList(env.RELAYS || env.NOSTR_RELAYS || ""));
+  extraGateways.push(...splitList(env.IPFS_GATEWAYS || env.GATEWAYS || ""));
   const envNpubs = splitList(env.NPUB || env.NPUBS || env.NOSTR_NPUBS || "");
   const npubs = [...positional, ...envNpubs];
 
@@ -70,6 +77,7 @@ export function parseArgs(argv, env = process.env) {
     help,
     folder,
     extraRelays,
+    extraGateways,
     npubs,
     maxWait: Number.isFinite(maxWait) && maxWait > 0 ? maxWait : 8000,
     maxPages: Number.isFinite(maxPages) && maxPages > 0 ? maxPages : 50,
@@ -89,6 +97,7 @@ Examples:
 Options:
   --folder, -o <dir>     Output folder (default: ./backup)
   --relays, -r <urls>    Extra relays, comma-separated (added to popular relays)
+  --gateway <url>        Extra IPFS HTTP gateway (e.g. http://localhost:3232)
   --timeout <ms>         Relay wait per page (default: 8000)
   --pages <n>            Max history pages per npub (default: 50)
   --help, -h
@@ -96,6 +105,7 @@ Options:
 Env:
   NPUB / NPUBS / NOSTR_NPUBS
   RELAYS / NOSTR_RELAYS
+  IPFS_GATEWAYS
   FOLDER / OUTPUT_DIR
 
 Layout:

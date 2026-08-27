@@ -22,7 +22,7 @@ test("downloadIpfs tries gateways and writes bytes", async () => {
   const result = await downloadIpfs({ cid: CID, uri: `ipfs://${CID}` }, dest, { fetchImpl });
   assert.equal(result.size, 10);
   assert.equal(await readFile(dest, "utf8"), "hello-ipfs");
-  assert.ok(urls[0].includes(CID));
+  assert.ok(urls.some((url) => url.includes(CID)));
 });
 
 test("downloadIpfs rejects sha256 mismatch", async () => {

@@ -27,6 +27,7 @@ try {
     npubs: args.npubs,
     folder: args.folder,
     extraRelays: args.extraRelays,
+    extraGateways: args.extraGateways,
     maxWait: args.maxWait,
     maxPages: args.maxPages,
   });
@@ -36,6 +37,7 @@ try {
       `${row.npub}: ${row.events} events, ${row.saved}/${row.ipfs} ipfs files -> ${row.dir}`,
     );
   }
+  process.exit(0);
 } catch (err) {
   console.error(err.message || err);
   process.exit(1);

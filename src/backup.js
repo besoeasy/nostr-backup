@@ -12,6 +12,7 @@ export async function backupNpubs({
   npubs,
   folder = "backup",
   extraRelays = [],
+  extraGateways = [],
   maxWait = 8000,
   maxPages = 50,
   querySync,
@@ -45,7 +46,15 @@ export async function backupNpubs({
       });
       const refs = extractIpfsRefsFromEvents(events);
       log(`${npub}: ${events.length} events, ${refs.length} ipfs:// objects`);
-      const saved = await saveNpubBackup(folder, encodeNpub(pubkey), events, refs, download, log);
+      const saved = await saveNpubBackup(
+        folder,
+        encodeNpub(pubkey),
+        events,
+        refs,
+        download,
+        log,
+        extraGateways,
+      );
       summary.push({
         npub,
         events: events.length,

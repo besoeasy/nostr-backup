@@ -9,13 +9,22 @@ test("parses one or many npubs", () => {
   assert.deepEqual(many.npubs, ["npub1abc", "npub1def"]);
 });
 
-test("folder and extra relays can be added", () => {
+test("folder, extra relays, and gateways can be added", () => {
   const args = parseArgs(
-    ["--folder", "./archive", "--relays", "wss://custom.relay,wss://other.relay", "npub1abc"],
+    [
+      "--folder",
+      "./archive",
+      "--relays",
+      "wss://custom.relay,wss://other.relay",
+      "--gateway",
+      "http://localhost:3232",
+      "npub1abc",
+    ],
     {},
   );
   assert.equal(args.folder, "./archive");
   assert.deepEqual(args.extraRelays, ["wss://custom.relay", "wss://other.relay"]);
+  assert.deepEqual(args.extraGateways, ["http://localhost:3232"]);
 });
 
 test("pages flag", () => {
