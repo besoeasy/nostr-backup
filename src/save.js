@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { gatewayUrls, mediaFilename } from "./ipfs.js";
+import { summarizeMetadata } from "./metadata.js";
 
 export async function ensureDir(dir) {
   await mkdir(dir, { recursive: true });
@@ -61,6 +62,7 @@ export async function saveNpubBackup(folder, npub, events, refs, download = down
   const media = mediaDir(folder, npub);
   await ensureDir(media);
   await writeJson(path.join(root, "events.json"), events);
+  await writeJson(path.join(root, "metadata.json"), summarizeMetadata(events));
 
   const manifest = [];
   for (const ref of refs) {

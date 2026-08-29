@@ -71,9 +71,25 @@ docker compose logs -f
 ```
 backup/
 └── npub1.../
-    ├── events.json    ← every event found for that pubkey
-    ├── media.json     ← ipfs:// objects and download results
-    └── media/         ← downloaded IPFS files
+    ├── events.json     ← every event found for that pubkey
+    ├── metadata.json   ← profile, follows, relays, bookmarks + kind counts
+    ├── media.json      ← ipfs:// objects and download results
+    └── media/          ← downloaded IPFS files
+```
+
+`metadata.json` is a friendly, at-a-glance summary of the account for discovery — the latest kind-0 profile (name, picture, `nip05`, website…), the people they follow (kind 3), relay list (kind 10002), bookmarks (kind 10003), and how many events of each kind are archived:
+
+```json
+{
+  "profile": { "name": "jack", "display_name": "", "about": "", "picture": "…", "banner": "", "nip05": "jack@…", "website": "", "lud16": "" },
+  "profile_at": 1710000000,
+  "follows": [ { "pubkey": "…", "relay": "wss://…" } ],
+  "follows_at": 1710000000,
+  "relays": [ { "url": "wss://relay.damus.io", "read": true, "write": false } ],
+  "bookmarks": [ "…event-id…" ],
+  "kinds": { "0": 1, "1": 120, "3": 1, "10002": 1 },
+  "event_count": 123
+}
 ```
 
 Only `ipfs://` links are fetched. HTTP gateways, Blossom servers, and bare CIDs in text are ignored.
