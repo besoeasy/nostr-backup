@@ -29,6 +29,43 @@ npx github:besoeasy/nostr-backup \
 
 ---
 
+## Docker (permanent backups every 45 minutes)
+
+Run a scheduled, always-on backup on any server without installing Node. The container backs up on startup and then every `SCHEDULE_MINUTES` (default `45`) minutes, writing into a Docker named volume.
+
+Create an `.env` file with the accounts to back up:
+
+```bash
+# .env  (at least one npub required)
+NPUBS=npub1abc...,npub1def...
+# optional
+# SCHEDULE_MINUTES=45
+# RELAYS=wss://my.relay,wss://another.relay
+# EXTRA_GATEWAYS=http://localhost:3232
+```
+
+Then start it:
+
+```bash
+docker compose up -d --build
+```
+
+Backups land in the `nostr-backup-data` named volume (mounted at `/backup`). To also inspect them from the host, mount a local folder too (see the commented block in `docker-compose.yml`), e.g.:
+
+```yaml
+volumes:
+  - nostr-backup-data:/backup
+  - ./backup:/backup/host
+```
+
+Watch the logs:
+
+```bash
+docker compose logs -f
+```
+
+---
+
 ## What you get
 
 ```

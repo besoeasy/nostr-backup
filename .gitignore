@@ -4,3 +4,4 @@ backup/
 .DS_Store
 .tmp/
 coverage/
+.env

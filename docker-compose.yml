@@ -1,0 +1,23 @@
+services:
+  nostr-backup:
+    build: .
+    image: nostr-backup:latest
+    container_name: nostr-backup
+    restart: unless-stopped
+    environment:
+      # REQUIRED: comma-separated npubs (or hex keys / nprofiles) to back up.
+      NPUBS: ${NPUBS:?set NPUBS in .env, e.g. NPUBS=npub1abc...,npub1def...}
+      # Optional: override the interval between runs (minutes).
+      SCHEDULE_MINUTES: ${SCHEDULE_MINUTES:-45}
+      # Optional: extra relays, comma-separated.
+      RELAYS: ${RELAYS:-}
+      # Optional: extra IPFS gateway (e.g. http://localhost:3232 for Originless).
+      EXTRA_GATEWAYS: ${EXTRA_GATEWAYS:-}
+    volumes:
+      # Named volume keeps backups persistent across container restarts.
+      - nostr-backup-data:/backup
+    # Mount the backup volume read-write so files persist on the host too,
+    # e.g. ./backup:/backup plus a named volume, if you want local access.
+
+volumes:
+  nostr-backup-data:
