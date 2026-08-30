@@ -1,6 +1,6 @@
 {
   "name": "nostr-backup",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Backup Nostr posts and ipfs:// media for one or many npubs.",
   "type": "module",
   "bin": {
