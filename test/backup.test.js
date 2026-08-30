@@ -47,7 +47,7 @@ test("save layout is folder/npub/media", async () => {
     async (_ref, dest) => {
       const { writeFile } = await import("node:fs/promises");
       await writeFile(dest, "bytes");
-      return { dest, size: 5, sha256: "aa", url: "https://ipfs.io/ipfs/" + CID, verified: false };
+      return { dest, size: 5, url: "https://ipfs.io/ipfs/" + CID };
     },
   );
   const listing = await readdir(path.join(folder, JACK, "media"));
@@ -78,7 +78,7 @@ test("backupNpubs handles one and many accounts", async () => {
     const { writeFile, mkdir } = await import("node:fs/promises");
     await mkdir(path.dirname(dest), { recursive: true });
     await writeFile(dest, "img");
-    return { dest, size: 3, sha256: "bb", url: "gateway", verified: false };
+    return { dest, size: 3, url: "gateway" };
   };
 
   const one = await backupNpubs({

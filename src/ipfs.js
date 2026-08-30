@@ -39,7 +39,6 @@ export function parseIpfsUri(raw) {
     subpath,
     filename,
     mime: "",
-    sha256: "",
   };
 }
 
@@ -64,7 +63,6 @@ function parseImeta(parts) {
   const ref = parseIpfsUri(url);
   if (!ref) return null;
   ref.mime = fields.m || "";
-  ref.sha256 = /^[0-9a-f]{64}$/i.test(fields.x || "") ? fields.x.toLowerCase() : "";
   ref.filename = fields.filename || fields.name || ref.filename;
   return ref;
 }
@@ -85,7 +83,6 @@ export function extractIpfsRefs(event) {
   const tags = Array.isArray(event?.tags) ? event.tags : [];
   let fileUrl = "";
   let fileMime = "";
-  let fileSha = "";
   let fileName = "";
 
   for (const tag of tags) {
@@ -101,7 +98,6 @@ export function extractIpfsRefs(event) {
       continue;
     }
     if (name === "m") fileMime = tag[1];
-    if (name === "x" && /^[0-9a-f]{64}$/i.test(tag[1] || "")) fileSha = tag[1].toLowerCase();
     if (name === "filename" || name === "name") fileName = tag[1];
     for (const part of tag.slice(1)) scanText(part, map);
   }
@@ -109,13 +105,11 @@ export function extractIpfsRefs(event) {
   if (fileUrl) {
     addRef(map, parseIpfsUri(fileUrl), {
       mime: fileMime,
-      sha256: fileSha,
       filename: fileName,
     });
-  } else if (map.size && (fileMime || fileSha || fileName)) {
+  } else if (map.size && (fileMime || fileName)) {
     for (const ref of map.values()) {
       if (!ref.mime) ref.mime = fileMime;
-      if (!ref.sha256) ref.sha256 = fileSha;
       if (!ref.filename) ref.filename = fileName;
     }
   }

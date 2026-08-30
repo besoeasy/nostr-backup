@@ -31,17 +31,15 @@ test("only ipfs:// is extracted, not gateways or bare CIDs", () => {
 });
 
 test("reads imeta and url tags", () => {
-  const sha = "a".repeat(64);
   const refs = extractIpfsRefs({
     kind: 1,
     content: "",
     tags: [
-      ["imeta", `url ipfs://${CID}`, "m image/jpeg", `x ${sha}`, "filename shot.jpg"],
+      ["imeta", `url ipfs://${CID}`, "m image/jpeg", "filename shot.jpg"],
     ],
   });
   assert.equal(refs.length, 1);
   assert.equal(refs[0].mime, "image/jpeg");
-  assert.equal(refs[0].sha256, sha);
   assert.equal(refs[0].filename, "shot.jpg");
 });
 

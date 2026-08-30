@@ -24,21 +24,3 @@ test("downloadIpfs tries gateways and writes bytes", async () => {
   assert.equal(await readFile(dest, "utf8"), "hello-ipfs");
   assert.ok(urls.some((url) => url.includes(CID)));
 });
-
-test("downloadIpfs rejects sha256 mismatch", async () => {
-  const folder = await mkdtemp(path.join(os.tmpdir(), "nostr-ipfs-"));
-  const dest = path.join(folder, "file.bin");
-  await assert.rejects(
-    downloadIpfs(
-      { cid: CID, sha256: "0".repeat(64) },
-      dest,
-      {
-        fetchImpl: async () => ({
-          ok: true,
-          arrayBuffer: async () => Buffer.from("hello-ipfs"),
-        }),
-      },
-    ),
-    /sha256 mismatch/,
-  );
-});

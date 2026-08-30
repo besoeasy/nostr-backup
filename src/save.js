@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { gatewayUrls, mediaFilename } from "./ipfs.js";
@@ -22,10 +21,6 @@ export function mediaDir(folder, npub) {
   return path.join(folder, npub, "media");
 }
 
-async function sha256Buffer(buf) {
-  return createHash("sha256").update(buf).digest("hex");
-}
-
 export async function downloadIpfs(ref, dest, { fetchImpl = globalThis.fetch, timeoutMs = 20000, gateways = [] } = {}) {
   const urls = gatewayUrls(ref, gateways);
   const parent = new AbortController();
@@ -36,19 +31,15 @@ export async function downloadIpfs(ref, dest, { fetchImpl = globalThis.fetch, ti
     if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
     const buf = Buffer.from(await res.arrayBuffer());
     if (!buf.length) throw new Error(`empty body from ${url}`);
-    const sha256 = await sha256Buffer(buf);
-    if (ref.sha256 && ref.sha256 !== sha256) {
-      throw new Error(`sha256 mismatch for ${ref.cid}`);
-    }
-    return { buf, url, sha256 };
+    return { buf, url };
   };
 
   try {
-    const { buf, url, sha256 } = await Promise.any(urls.map((u) => attempt(u)));
+    const { buf, url } = await Promise.any(urls.map((u) => attempt(u)));
     parent.abort();
     await ensureDir(path.dirname(dest));
     await writeFile(dest, buf);
-    return { dest, size: buf.length, sha256, url, verified: Boolean(ref.sha256) };
+    return { dest, size: buf.length, url };
   } catch (err) {
     const details = err?.errors?.map((e) => e.message).join("; ") || err.message || String(err);
     throw new Error(`failed to download ${ref.cid}: ${details}`);
@@ -76,9 +67,7 @@ export async function saveNpubBackup(folder, npub, events, refs, download = down
         filename,
         mime: ref.mime || "",
         size: result.size,
-        sha256: result.sha256,
         source: result.url,
-        verified: result.verified,
         eventIds: ref.eventIds || [],
         ok: true,
       });
